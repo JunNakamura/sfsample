@@ -7,9 +7,7 @@
 * https://developer.salesforce.com/signup で開発アカウントを作成
 * ログイン後にセキュリティトークンを発行
 
-# APIに応じたclient sideのstubコード生成
-
-## WSDLの作成
+# WSDLからのclient-side codeの生成
 
 1. [Enterprise](https://ap4.salesforce.com/soap/wsdl.jsp?type=*)
 2. [Partner](https://ap4.salesforce.com/soap/wsdl.jsp)
@@ -36,3 +34,7 @@ antlr-runtime-3.5.jar  force-wsc-39.0.0.jar  ST4-4.0.7.jar  stringtemplate-3.2.1
 開発アカウントのID(メールアドレス)、パスワード、セキュリティトークンをシステムプロパティ経由で渡す
 
 `-DSF_USER=<user_id> -DSF_PASSWORD=<password+security_token> `
+
+# 参考サイト
+
+* https://developer.salesforce.com/page/Introduction_to_the_Force.com_Web_Services_Connector
