@@ -26,7 +26,7 @@ antlr-runtime-3.5.jar  force-wsc-39.0.0.jar  ST4-4.0.7.jar  stringtemplate-3.2.1
 
 上記をひとつのディレクトリ(libs)にまとめて、wsdlファイル、作成後のjarファイル名を渡す。
 
-`java -cp 'libs/force-wsc-39.0.0.jar:libs/*' com.sforce.ws.tools.wsdlc sfsample/src/resources/enterprise.wsdl  enterprize.jar`
+`java -cp 'libs/force-wsc-39.0.0.jar:libs/*' com.sforce.ws.tools.wsdlc sfsample/src/resources/enterprise.wsdl  enterprise.jar`
 
 
 # 接続情報
