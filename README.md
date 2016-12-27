@@ -40,3 +40,5 @@ antlr-runtime-3.5.jar  force-wsc-39.0.0.jar  ST4-4.0.7.jar  stringtemplate-3.2.1
 * https://developer.salesforce.com/page/Introduction_to_the_Force.com_Web_Services_Connector
 * https://developer.salesforce.com/docs/atlas.en-us.api.meta/api/sforce_api_quickstart_intro.htm
 * https://developer.salesforce.com/page/Cheat_Sheets
+* https://developer.salesforce.com/page/Java
+* https://developer.salesforce.com/docs/atlas.en-us.api_meta.meta/api_meta/meta_intro.htm
