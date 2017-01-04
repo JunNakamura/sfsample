@@ -76,6 +76,11 @@ curl https://login.salesforce.com/services/oauth2/token -d "grant_type=password"
 
 https://developer.salesforce.com/docs/atlas.ja-jp.api_asynch.meta/api_asynch/asynch_api_intro.htm
 
+## 一括クエリ
+
+https://developer.salesforce.com/docs/atlas.ja-jp.api_asynch.meta/api_asynch/asynch_api_using_bulk_query.htm
+
+
 # 参考サイト
 
 * https://developer.salesforce.com/page/Introduction_to_the_Force.com_Web_Services_Connector
