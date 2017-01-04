@@ -1,13 +1,10 @@
 package util;
 
 import com.sforce.soap.enterprise.Connector;
+import com.sforce.soap.enterprise.EnterpriseConnection;
 import com.sforce.ws.ConnectionException;
 import com.sforce.ws.ConnectorConfig;
-import com.sforce.soap.enterprise.EnterpriseConnection;
 
-/**
- * Created by nakamura_jun on 2016/12/26.
- */
 public class ConnectionUtil {
 
     public static EnterpriseConnection createEPC() throws ConnectionException {
