@@ -1,6 +1,22 @@
 # What is this ?
 
- Force.com APIを使ったサンプルコード
+ Force.com APIを使ったサンプルコード. 
+ 主にsoap apiのサンプルを作成
+ 
+ 
+# APIの種類
+
+主なものは以下のもの
+
+* REST API
+* SOAP API
+* Bulk API
+* Metadata API
+ 
+ 
+# どのAPIを使用すべきか
+
+https://help.salesforce.com/articleView?id=integrate_what_is_api.htm&language=ja&type=0 
 
 # 事前準備
 
