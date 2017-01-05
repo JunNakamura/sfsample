@@ -5,6 +5,11 @@ import com.sforce.soap.metadata.ReadResult;
 import com.sforce.ws.ConnectionException;
 import util.MetadataLoginUtil;
 
+/**
+ * Metadata APIのサンプル.
+ * @author nakamura_jun
+ *
+ */
 public class CustomObjectSample {
 
     public static void main(String[] args) throws ConnectionException {

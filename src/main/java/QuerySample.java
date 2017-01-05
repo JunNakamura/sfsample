@@ -5,6 +5,11 @@ import com.sforce.soap.enterprise.sobject.SObject;
 import com.sforce.ws.ConnectionException;
 import util.ConnectionUtil;
 
+/**
+ * SOQLを使ったサンプル.
+ * @author nakamura_jun
+ *
+ */
 public class QuerySample {
 
     public static void main(String[] args) throws ConnectionException {

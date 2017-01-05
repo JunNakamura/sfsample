@@ -22,6 +22,11 @@ import com.sforce.ws.ConnectionException;
 
 import util.ConnectionUtil;
 
+/**
+ * bulk APIの一括クエリのサンプル.
+ * @author nakamura_jun
+ *
+ */
 public class BulkSample {
 	
 	public static void main(String[] args) throws ConnectionException, AsyncApiException, InterruptedException, ExecutionException, IOException {

@@ -11,6 +11,11 @@ import util.ConnectionUtil;
 
 import java.time.LocalDateTime;
 
+/**
+ * SObjectの登録のサンプル
+ * @author nakamura_jun
+ *
+ */
 public class Main {
 
     public static void main(String[] args) throws ConnectionException {
