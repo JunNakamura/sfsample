@@ -80,9 +80,7 @@ public class BulkSample {
 			
 		}
 		
-		
-		
-		
+		connection.closeJob(job.getId());
 	}
 	
 	private static JobInfo createJob(BulkConnection connection) throws AsyncApiException {
