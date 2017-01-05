@@ -3,7 +3,6 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
@@ -13,7 +12,6 @@ import java.util.concurrent.TimeUnit;
 
 import com.sforce.async.AsyncApiException;
 import com.sforce.async.BatchInfo;
-import com.sforce.async.BatchStateEnum;
 import com.sforce.async.BulkConnection;
 import com.sforce.async.ConcurrencyMode;
 import com.sforce.async.ContentType;
@@ -48,8 +46,9 @@ public class BulkSample {
 					System.out.println("batch:" + batch.getId() + " failed.");
 					result.complete(new String[]{});
 					break;
-				default: 	
+				default:
 					System.out.println("-- waiting --");
+					System.out.println("state: " + info.getState());
 				}
 			} catch (AsyncApiException e) {
 				result.completeExceptionally(e);
