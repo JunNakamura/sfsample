@@ -39,14 +39,17 @@ public class BulkSample {
 			System.out.println("--- checking batch status ---");
 			try {
 				BatchInfo info = connection.getBatchInfo(job.getId(), batch.getId());
-				if (info.getState() == BatchStateEnum.Completed) {
+				switch (info.getState()) {
+				case Completed:
 					QueryResultList queryResults = connection.getQueryResultList(job.getId(), batch.getId());
 					result.complete(queryResults.getResult());
-				} else if (info.getState() == BatchStateEnum.Failed) {
+					break;
+				case Failed:
 					System.out.println("batch:" + batch.getId() + " failed.");
 					result.complete(new String[]{});
-				} else {
-					System.out.println("-- in progress --");
+					break;
+				default: 	
+					System.out.println("-- waiting --");
 				}
 			} catch (AsyncApiException e) {
 				result.completeExceptionally(e);
