@@ -23,6 +23,8 @@ https://help.salesforce.com/articleView?id=integrate_what_is_api.htm&language=ja
 
 # SOAP API
 
+http://resources.docs.salesforce.com/rel1/doc/en-us/static/pdf/SF_Soap_API_cheatsheet_web.pdf
+
 ## 事前準備
 
 * https://developer.salesforce.com/signup で開発アカウントを作成
@@ -73,6 +75,7 @@ eclipseなら、実行>実行の構成>引数タブ>VM引数　に記述する�
 ## quick start
 
 https://developer.salesforce.com/docs/atlas.ja-jp.api_rest.meta/api_rest/quickstart_oauth.htm
+http://resources.docs.salesforce.com/rel1/doc/en-us/static/pdf/SF_Rest_API_cheatsheet_web.pdf
 
 ```
 curl https://***instance_name***.salesforce.com/services/data/v20.0/ -H 'Authorization: Bearer access_token'
