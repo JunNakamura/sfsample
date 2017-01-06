@@ -10,9 +10,10 @@ import util.MetadataLoginUtil;
  * @author nakamura_jun
  *
  */
-public class CustomObjectSample {
+public class MetadataSample {
 
     public static void main(String[] args) throws ConnectionException {
+    	// CustomObjectのmetadataを取得
         MetadataConnection connection = MetadataLoginUtil.login();
         ReadResult readResult = connection.readMetadata("CustomObject", new String[]{"test__c"});
         Metadata[] metadata = readResult.getRecords();
