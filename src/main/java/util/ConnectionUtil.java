@@ -23,7 +23,7 @@ public class ConnectionUtil {
     public static BulkConnection createBulk() throws ConnectionException, AsyncApiException {
     	ConnectorConfig config = new ConnectorConfig();
     	LoginResult loginResult = loginToSalesforce();
-    	config.setRestEndpoint("https://ap4.salesforce.com/services/async/" + API_VERSION);
+    	config.setRestEndpoint("https://ap4.salesforce.com/services/async/" + API_VERSION); //ap4は開発用エディションのインスタンス
         config.setSessionId(loginResult.getSessionId());
     	return new BulkConnection(config);
     }
