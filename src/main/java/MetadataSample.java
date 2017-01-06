@@ -23,7 +23,7 @@ public class MetadataSample {
         MetadataConnection connection = ConnectionUtil.createMetadata();
         ReadResult readResult = connection.readMetadata("CustomObject", new String[]{"test__c"});
         Metadata[] metadata = readResult.getRecords();
-        System.out.println("records: " + metadata.length);
+        logger.info("records: " + metadata.length);
         for (Metadata data: metadata) {
         	if (data != null) {
         		logger.info("metadata: " + data);
