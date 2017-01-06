@@ -16,7 +16,7 @@ import java.time.LocalDateTime;
  * @author nakamura_jun
  *
  */
-public class Main {
+public class SObjectSample {
 
     public static void main(String[] args) throws ConnectionException {
         EnterpriseConnection connection = ConnectionUtil.createEPC();
