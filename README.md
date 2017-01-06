@@ -44,10 +44,11 @@ https://help.salesforce.com/articleView?id=integrate_what_is_api.htm&language=ja
 wsdlから追加されたカスタムオブジェクト、カスタムフィールドに対応するテーブルやカラムの情報を取得し、対応するJavaクラスが生成される。
 
 [force-wsc](https://github.com/forcedotcom/wsc) のソースをビルド or [maven](https://mvnrepository.com/artifact/com.force.api/force-wsc)から取得
+(build.gradleに依存ライブラリとして記述しているので、それを使える状態にしている)
 
 `com.sforce.ws.tools.wsdlc` を実行することでstubコードをまとめたjarが生成される。
 
-実行には以下が必要。
+実行には以下が必要。（gradleで依存ライブラリを取得した場合は ${USER_HOME}/.gradle/以下にある）
 ```
 antlr-runtime-3.5.jar  force-wsc-39.0.0.jar  ST4-4.0.7.jar  stringtemplate-3.2.1.jar
 ```
@@ -62,6 +63,9 @@ antlr-runtime-3.5.jar  force-wsc-39.0.0.jar  ST4-4.0.7.jar  stringtemplate-3.2.1
 開発アカウントのID(メールアドレス)、パスワード、セキュリティトークンをシステムプロパティ経由で渡す
 
 `-DSF_USER=<user_id> -DSF_PASSWORD=<password+security_token> `
+
+eclipseなら、実行>実行の構成>引数タブ>VM引数　に記述することで指定できる.
+
 
 # REST API
 
