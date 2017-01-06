@@ -67,6 +67,7 @@ public class BulkChunkSample {
 				// XXX とりあえず標準出力. マルチスレッドなので、順番はでたらめになる
 				// 本当はひとつのファイルに書き込むなどして、結果を集約させる.
 				for (String resultId : batchResult.resultIds) {
+					// ラムダ式内では例外スローできないので、try-catch
 					try {
 						InputStream is = connection.getQueryResultStream(job.getId(), batchResult.batchInfo.getId(), resultId);
 						try(BufferedReader br = new BufferedReader(new InputStreamReader(is, StandardCharsets.UTF_8))) {
@@ -158,6 +159,12 @@ public class BulkChunkSample {
 		return result;
 	}
 	
+	/**
+	 * 分割されたバッチごとの結果を表すクラス
+	 * クエリの結果を受け取るには、resultIdの配列とbatchIdが必要なため作成.
+	 * @author nakamura_jun
+	 *
+	 */
 	private static class ChunkBatchResult {
 		
 		public final BatchInfo batchInfo;
