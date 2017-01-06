@@ -1,3 +1,6 @@
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.sforce.soap.enterprise.EnterpriseConnection;
 import com.sforce.soap.enterprise.QueryResult;
 import com.sforce.soap.enterprise.sobject.Contact;
@@ -11,6 +14,8 @@ import util.ConnectionUtil;
  *
  */
 public class QuerySample {
+	
+	private static final Logger logger = LoggerFactory.getLogger(QuerySample.class);
 
     public static void main(String[] args) throws ConnectionException {
         EnterpriseConnection connection = ConnectionUtil.createEPC();
@@ -20,19 +25,19 @@ public class QuerySample {
         if (results.getSize() > 0) {
             for (SObject so: results.getRecords()) {
                 Contact c = (Contact) so;
-                System.out.println("contact:" + c);
+                logger.info("contact:" + c);
             }
         }
         
-        System.out.println("-----");
-        System.out.println("Custom Objects");
+        logger.info("-----");
+        logger.info("Custom Objects");
         EnterpriseConnection c2 = ConnectionUtil.createEPC();
         // カスタムオブジェクトの取得. テーブル、カラム名にはsuffixとして`__c`をつける. 標準項目のカラム名はそのままでよい.
         String sql2 = "select id__c, note__c, Name from s1__c";
         QueryResult res = c2.query(sql2);
         if (res.getSize() > 0) {
         	for (SObject so: res.getRecords()) {
-                System.out.println("custom object as so:" + so);
+        		logger.info("custom object as so:" + so);
             }
         }
 

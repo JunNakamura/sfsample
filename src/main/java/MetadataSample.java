@@ -1,3 +1,6 @@
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.sforce.soap.metadata.CustomObject;
 import com.sforce.soap.metadata.Metadata;
 import com.sforce.soap.metadata.MetadataConnection;
@@ -12,6 +15,8 @@ import util.ConnectionUtil;
  *
  */
 public class MetadataSample {
+	
+	private static final Logger logger = LoggerFactory.getLogger(MetadataSample.class);
 
     public static void main(String[] args) throws ConnectionException {
     	// CustomObjectのmetadataを取得
@@ -21,11 +26,11 @@ public class MetadataSample {
         System.out.println("records: " + metadata.length);
         for (Metadata data: metadata) {
         	if (data != null) {
-        		System.out.println("metadata: " + data);
+        		logger.info("metadata: " + data);
                 CustomObject co = (CustomObject) data;
-                System.out.println("co: " + co);
+                logger.info("co: " + co);
         	} else {
-        		System.out.println("Empty metadata.");
+        		logger.info("Empty metadata.");
         	}
             
         }

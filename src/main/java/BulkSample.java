@@ -10,6 +10,9 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.sforce.async.AsyncApiException;
 import com.sforce.async.BatchInfo;
 import com.sforce.async.BulkConnection;
@@ -29,6 +32,8 @@ import util.ConnectionUtil;
  */
 public class BulkSample {
 	
+	private static final Logger logger = LoggerFactory.getLogger(BulkSample.class);
+	
 	public static void main(String[] args) throws ConnectionException, AsyncApiException, InterruptedException, ExecutionException, IOException {
 		BulkConnection connection = ConnectionUtil.createBulk();
 		JobInfo job = createJob(connection);
@@ -39,7 +44,7 @@ public class BulkSample {
 		ScheduledExecutorService checkBatchStatus = Executors.newSingleThreadScheduledExecutor();
 		CompletableFuture<String[]> result = new CompletableFuture<>();
 		checkBatchStatus.scheduleAtFixedRate(() -> {
-			System.out.println("--- checking batch status ---");
+			logger.info("--- checking batch status ---");
 			try {
 				BatchInfo info = connection.getBatchInfo(job.getId(), batch.getId());
 				switch (info.getState()) {
@@ -48,12 +53,12 @@ public class BulkSample {
 					result.complete(queryResults.getResult());
 					break;
 				case Failed:
-					System.out.println("batch:" + batch.getId() + " failed.");
+					logger.warn("batch:" + batch.getId() + " failed.");
 					result.complete(new String[]{});
 					break;
 				default:
-					System.out.println("-- waiting --");
-					System.out.println("state: " + info.getState());
+					logger.info("-- waiting --");
+					logger.info("state: " + info.getState());
 				}
 			} catch (AsyncApiException e) {
 				result.completeExceptionally(e);
@@ -62,19 +67,19 @@ public class BulkSample {
 		
 		result.whenComplete((results, thrown) -> {
 			checkBatchStatus.shutdownNow();
-			System.out.println("--- batch is done. ---");
+			logger.info("--- batch is done. ---");
 		});
 		
 		// バッチ完了後に結果を取得
 		String[] resultIds = result.get();
-		System.out.println("--- results ---");
+		logger.info("--- results ---");
 		for (String resultId: resultIds) {
 			InputStream is = connection.getQueryResultStream(job.getId(), batch.getId(), resultId);
 			// とりあえず標準出力. 実際はファイルとして保存してそれをDBに登録するなど
 			try(BufferedReader br = new BufferedReader(new InputStreamReader(is, StandardCharsets.UTF_8))) {
 				String line = null;
 				while((line = br.readLine()) != null) {
-					System.out.println(line);
+					logger.info(line);
 				}
 			}
 			
