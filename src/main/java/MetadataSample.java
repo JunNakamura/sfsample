@@ -3,7 +3,8 @@ import com.sforce.soap.metadata.Metadata;
 import com.sforce.soap.metadata.MetadataConnection;
 import com.sforce.soap.metadata.ReadResult;
 import com.sforce.ws.ConnectionException;
-import util.MetadataLoginUtil;
+
+import util.ConnectionUtil;
 
 /**
  * Metadata APIのサンプル.
@@ -14,7 +15,7 @@ public class MetadataSample {
 
     public static void main(String[] args) throws ConnectionException {
     	// CustomObjectのmetadataを取得
-        MetadataConnection connection = MetadataLoginUtil.login();
+        MetadataConnection connection = ConnectionUtil.createMetadata();
         ReadResult readResult = connection.readMetadata("CustomObject", new String[]{"test__c"});
         Metadata[] metadata = readResult.getRecords();
         System.out.println("records: " + metadata.length);

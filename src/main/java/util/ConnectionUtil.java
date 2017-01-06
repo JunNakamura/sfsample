@@ -5,6 +5,7 @@ import com.sforce.async.BulkConnection;
 import com.sforce.soap.enterprise.Connector;
 import com.sforce.soap.enterprise.EnterpriseConnection;
 import com.sforce.soap.enterprise.LoginResult;
+import com.sforce.soap.metadata.MetadataConnection;
 import com.sforce.ws.ConnectionException;
 import com.sforce.ws.ConnectorConfig;
 
@@ -25,6 +26,14 @@ public class ConnectionUtil {
     	config.setRestEndpoint("https://ap4.salesforce.com/services/async/" + API_VERSION);
         config.setSessionId(loginResult.getSessionId());
     	return new BulkConnection(config);
+    }
+    
+    public static MetadataConnection createMetadata() throws ConnectionException {
+    	ConnectorConfig config = new ConnectorConfig();
+    	LoginResult loginResult = loginToSalesforce();
+    	config.setServiceEndpoint(loginResult.getMetadataServerUrl());
+        config.setSessionId(loginResult.getSessionId());
+        return new MetadataConnection(config);
     }
 
     private static ConnectorConfig getConfig() {
