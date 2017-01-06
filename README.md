@@ -5,7 +5,7 @@
 
 # prerequisite
 
-java 1.8 or later. 
+jdk 1.8 or later. 
  
 # APIの種類
 
@@ -42,6 +42,7 @@ https://help.salesforce.com/articleView?id=integrate_what_is_api.htm&language=ja
 
 の３つがある。上記リンクからwsdlをダウンロードする。(main/resourcesに保持している)
 wsdlから追加されたカスタムオブジェクト、カスタムフィールドに対応するテーブルやカラムの情報を取得し、対応するJavaクラスが生成される。
+(コードで指定しているオブジェクトがないときはsalesforceアプリにログインして適宜作成すればよい)
 
 [force-wsc](https://github.com/forcedotcom/wsc) のソースをビルド or [maven](https://mvnrepository.com/artifact/com.force.api/force-wsc)から取得
 (build.gradleに依存ライブラリとして記述しているので、それを使える状態にしている)
