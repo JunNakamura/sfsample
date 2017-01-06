@@ -2,7 +2,10 @@
 
  Force.com APIを使ったサンプルコード. 
  主にsoap apiのサンプルを作成
- 
+
+# prerequisite
+
+java 1.8 or later. 
  
 # APIの種類
 
@@ -25,13 +28,20 @@ https://help.salesforce.com/articleView?id=integrate_what_is_api.htm&language=ja
 * https://developer.salesforce.com/signup で開発アカウントを作成
 * ログイン後にセキュリティトークンを発行
 
+### セキュリティトークンの発行
+
+ログイン後、画面右上に、ユーザ名がある。そこから、 「私の設定」>「個人用」>「私のセキュリティートークンのリセット」　で、トークンのリセット画面に遷移
+
+`_ui/system/security/ResetApiTokenEdit?retURL=%2Fui%2Fsetup%2FSetup%3Fsetupid%3DPersonalInfo&setupid=ResetApiToken`
+
 ## WSDLからのclient-side codeの生成
 
 1. [Enterprise](https://ap4.salesforce.com/soap/wsdl.jsp?type=*)
 2. [Partner](https://ap4.salesforce.com/soap/wsdl.jsp)
 3. [Metadata](https://ap4.salesforce.com/services/wsdl/metadata)
 
-の３つがある。上記リンクからwsdlをダウンロードする。
+の３つがある。上記リンクからwsdlをダウンロードする。(main/resourcesに保持している)
+wsdlから追加されたカスタムオブジェクト、カスタムフィールドに対応するテーブルやカラムの情報を取得し、対応するJavaクラスが生成される。
 
 [force-wsc](https://github.com/forcedotcom/wsc) のソースをビルド or [maven](https://mvnrepository.com/artifact/com.force.api/force-wsc)から取得
 
