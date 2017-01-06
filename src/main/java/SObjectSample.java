@@ -11,12 +11,17 @@ import util.ConnectionUtil;
 
 import java.time.LocalDateTime;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 /**
  * SObjectの登録のサンプル
  * @author nakamura_jun
  *
  */
 public class SObjectSample {
+	
+	private static final Logger logger = LoggerFactory.getLogger(SObjectSample.class);
 
     public static void main(String[] args) throws ConnectionException {
         EnterpriseConnection connection = ConnectionUtil.createEPC();
@@ -27,7 +32,7 @@ public class SObjectSample {
         SaveResult[] res = connection.create(so);
 
         for (SaveResult result: res) {
-            System.out.println(result);
+        	logger.info(result.toString());
         }
 
     }
