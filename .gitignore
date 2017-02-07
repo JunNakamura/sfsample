@@ -7,3 +7,5 @@ gradle/
 build/
 .idea/
 /log/
+/sfsample/.nb-gradle/
+/.nb-gradle/
