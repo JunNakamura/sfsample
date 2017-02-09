@@ -98,6 +98,11 @@ https://developer.salesforce.com/docs/atlas.ja-jp.api_asynch.meta/api_asynch/asy
 
 https://developer.salesforce.com/docs/atlas.ja-jp.api_asynch.meta/api_asynch/asynch_api_using_bulk_query.htm
 
+# tool
+
+* https://soqlbuilder.herokuapp.com
+* http://dataloader.io/
+
 
 # 参考サイト
 
