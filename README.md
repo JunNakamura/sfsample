@@ -103,6 +103,12 @@ https://developer.salesforce.com/docs/atlas.ja-jp.api_asynch.meta/api_asynch/asy
 * https://soqlbuilder.herokuapp.com
 * http://dataloader.io/
 
+# tips
+
+## データの一括削除
+
+* https://help.salesforce.com/articleView?id=000193399&language=ja&type=1
+* https://help.salesforce.com/articleView?id=inserting_updating_or_deleting_data.htm&language=ja&type=0
 
 # 参考サイト
 
