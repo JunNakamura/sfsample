@@ -102,6 +102,7 @@ https://developer.salesforce.com/docs/atlas.ja-jp.api_asynch.meta/api_asynch/asy
 
 * https://soqlbuilder.herokuapp.com
 * http://dataloader.io/
+* https://schemalister.herokuapp.com
 
 # tips
 
