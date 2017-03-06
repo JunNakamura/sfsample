@@ -112,6 +112,10 @@ https://developer.salesforce.com/docs/atlas.ja-jp.api_asynch.meta/api_asynch/asy
 * https://help.salesforce.com/articleView?id=000193399&language=ja&type=1
 * https://help.salesforce.com/articleView?id=inserting_updating_or_deleting_data.htm&language=ja&type=0
 
+## 1リクエストあたりの処理件数　
+
+* http://salesforce.stackexchange.com/questions/55096/can-i-only-update-200-records-at-once-with-soap-api-enterprise-wsdl-limitation
+
 # 参考サイト
 
 * https://developer.salesforce.com/page/Introduction_to_the_Force.com_Web_Services_Connector
