@@ -106,6 +106,7 @@ https://developer.salesforce.com/docs/atlas.ja-jp.api_asynch.meta/api_asynch/asy
 * http://sftoolkit.co/
 * https://force-cli.heroku.com/
 * https://developer.salesforce.com/ja/tools/forcecli
+* https://github.com/heroku/force
 
 # tips
 
