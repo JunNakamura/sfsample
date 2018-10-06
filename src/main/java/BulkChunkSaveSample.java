@@ -103,6 +103,7 @@ public class BulkChunkSaveSample {
                 BatchInfo batchInfo = infoList.get(0);
                 switch (batchInfo.getState()) {
                     case NotProcessed:
+                        // 先頭以降のバッチがクエリ結果に関するもの
                         infoList.remove(0);
                         result.complete(infoList);
                         break;
