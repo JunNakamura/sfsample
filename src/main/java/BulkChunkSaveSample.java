@@ -6,11 +6,13 @@ import util.ConnectionUtil;
 
 import java.io.*;
 import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.StandardOpenOption;
+import java.util.*;
 import java.util.concurrent.*;
+import java.util.zip.GZIPOutputStream;
 
 public class BulkChunkSaveSample {
 	
@@ -26,47 +28,47 @@ public class BulkChunkSaveSample {
 		
 		// クエリ全体を処理するために追加されたバッチの情報を取得
 		List<BatchInfo> batchList = getChunkBatch(job, connection);
-		
 		logger.info("chunked batch size : " + batchList.size());
-		
-		// バッチごとにステータスチェック+結果の取得を、非同期に行う
-		ExecutorService executor = Executors.newFixedThreadPool(batchList.size());
-		CompletionService<CompletableFuture<ChunkBatchResult>> completionService = new ExecutorCompletionService<>(executor);
-		for (BatchInfo chunkBatch: batchList) {
-			completionService.submit(() -> BulkChunkSaveSample.getResultIds(job, connection, chunkBatch));
-		}
-		
-		logger.info("submitting is done.");
-		
-		// 終わったものから結果を取得
-		for (int i = 0; i < batchList.size(); i++) {
-			CompletableFuture<ChunkBatchResult> resultIds = completionService.take().get();
-			// XXX getした方が見通しは良さそう。効率的にはwhenCompleteの方がいいはず
-			resultIds.whenComplete((batchResult, thrown) -> {
-				logger.info("--- results --- : batchId:" + batchResult.batchInfo.getId());
-				// XXX とりあえず標準出力. マルチスレッドなので、順番はでたらめになる
-				// 本当はひとつのファイルに書き込むなどして、結果を集約させる.
-				for (String resultId : batchResult.resultIds) {
-					// ラムダ式内では例外スローできないので、try-catch
-					try {
-						InputStream is = connection.getQueryResultStream(job.getId(), batchResult.batchInfo.getId(), resultId);
-						try(BufferedReader br = new BufferedReader(new InputStreamReader(is, StandardCharsets.UTF_8))) {
-							String line = null;
-							while((line = br.readLine()) != null) {
-								logger.info(line);
-							}
-						} catch (IOException e) {
-							e.printStackTrace();
-						}
-					} catch (AsyncApiException e) {
-						e.printStackTrace();
-					} 
-				}
-				logger.info("--- end --- : batchId:" + batchResult.batchInfo.getId());
-			});
-		}
-		// ジョブ内のバッチを終了させるのと、モニタリングのため
-		connection.closeJob(job.getId());
+
+		// 分割されたクエリ結果をパイプを使って、ひとつのファイルにまとめて、gzip圧縮して保存
+        Path resultFile = Paths.get("result.csv.gz");
+		try (PipedOutputStream pipedOut = new PipedOutputStream();
+             PipedInputStream pipedIn = new PipedInputStream(pipedOut);
+             BufferedWriter pipedWriter = new BufferedWriter(new OutputStreamWriter(pipedOut));
+             BufferedReader pipedReader = new BufferedReader(new InputStreamReader(pipedIn, StandardCharsets.UTF_8));
+             OutputStream os = Files.newOutputStream(resultFile, StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING, StandardOpenOption.WRITE);
+             GZIPOutputStream gzip = new GZIPOutputStream(os);
+             OutputStreamWriter ow = new OutputStreamWriter(gzip, StandardCharsets.UTF_8);
+             BufferedWriter bw = new BufferedWriter(ow);) {
+
+            ExecutorService executor = Executors.newFixedThreadPool(batchList.size() + 1);
+            // 読み取り用パイプの内容をファイルに書き込みを別スレッドで開始
+            executor.submit(() -> {
+                try {
+                    String line;
+                    while ((line = pipedReader.readLine()) != null) {
+                        bw.write(line);
+                        bw.newLine();
+                    }
+                } catch (Exception e) {
+                    logger.error("Failed.", e);
+                }
+            });
+
+            // バッチごとにステータスチェック+結果をパイプに書き込み
+            for (BatchInfo chunkBatch: batchList) {
+                // ネットワークの通信量に制約がなければ非同期で行う.
+                // executor.submit(() -> BulkChunkSaveSample.retrieveResult(job, connection, chunkBatch, pipedWriter));
+                BulkChunkSaveSample.retrieveResult(job, connection, chunkBatch, pipedWriter);
+            }
+
+
+        } catch (Exception e) {
+		    logger.error("Failed.", e);
+        } finally {
+            // ジョブ内のバッチを終了させるのと、モニタリングのため
+            connection.closeJob(job.getId());
+        }
 	}
 	
 	private static JobInfo createJob(BulkConnection connection) throws AsyncApiException {
@@ -122,68 +124,57 @@ public class BulkChunkSaveSample {
         });
         return result.get();
 	}
-	
-	private static CompletableFuture<ChunkBatchResult> getResultIds(JobInfo job, BulkConnection connection, BatchInfo chunkBatch) {
-		logger.info("getting resultIds for " + chunkBatch.getId());
-		ScheduledExecutorService checkBatchStatus = Executors.newSingleThreadScheduledExecutor();
-		CompletableFuture<ChunkBatchResult> result = new CompletableFuture<>();
-		checkBatchStatus.scheduleAtFixedRate(() -> {
-			logger.info("--- checking batch status --- : " + chunkBatch.getId());
-			try {
-				BatchInfo info = connection.getBatchInfo(job.getId(), chunkBatch.getId());
-				switch (info.getState()) {
-				case Completed:
-					QueryResultList queryResults = connection.getQueryResultList(job.getId(), chunkBatch.getId());
-					result.complete(ChunkBatchResult.newInstance(chunkBatch, queryResults.getResult()));
-					break;
-				case Failed:
-					logger.warn("batch:" + chunkBatch.getId() + " failed.");
-					result.complete(ChunkBatchResult.newInstance(chunkBatch, new String[]{}));
-					break;
-				default:
-					logger.info("-- waiting --");
-					logger.info("state: " + info.getState());
-				}
-			} catch (AsyncApiException e) {
-				result.completeExceptionally(e);
-			}
-		}, 1, 15, TimeUnit.SECONDS);
-		
-		result.whenComplete((results, thrown) -> {
-			checkBatchStatus.shutdownNow();
-			logger.info("--- batch is done. --- : " + chunkBatch.getId());
-		});
-		
-		// バッチ完了後に結果を取得
-		return result;
-	}
-	
-	/**
-	 * 分割されたバッチごとの結果を表すクラス
-	 * クエリの結果を受け取るには、resultIdの配列とbatchIdが必要なため作成.
-	 * @author nakamura_jun
-	 *
-	 */
-	private static class ChunkBatchResult {
-		
-		public final BatchInfo batchInfo;
-		
-		public final String[] resultIds;
-		
-		public static ChunkBatchResult newInstance(BatchInfo batchInfo, String[] resultIds) {
-			 return new ChunkBatchResult(batchInfo, resultIds);
-		 }
-		
-		private ChunkBatchResult(BatchInfo batchInfo, String[] resultIds) {
-			this.batchInfo = batchInfo;
-			this.resultIds = resultIds;
-		}
-		 
-		 
-		
-		
-	}
-	
-	
+
+	private static void retrieveResult(JobInfo job, BulkConnection connection, BatchInfo chunkBatch, BufferedWriter pipedWriter)  {
+        logger.info("getting resultIds for " + chunkBatch.getId());
+        try {
+            ScheduledExecutorService checkBatchStatus = Executors.newSingleThreadScheduledExecutor();
+            CompletableFuture<List<String>> result = new CompletableFuture<>();
+            checkBatchStatus.scheduleAtFixedRate(() -> {
+                logger.info("--- checking batch status --- : " + chunkBatch.getId());
+                try {
+                    BatchInfo info = connection.getBatchInfo(job.getId(), chunkBatch.getId());
+                    switch (info.getState()) {
+                        case Completed:
+                            QueryResultList queryResults = connection.getQueryResultList(job.getId(), chunkBatch.getId());
+                            result.complete(Arrays.asList(queryResults.getResult()));
+                            break;
+                        case Failed:
+                            logger.warn("batch:" + chunkBatch.getId() + " failed.");
+                            result.complete(Collections.emptyList());
+                            break;
+                        default:
+                            logger.info("-- waiting --");
+                            logger.info("state: " + info.getState());
+                    }
+                } catch (AsyncApiException e) {
+                    result.completeExceptionally(e);
+                }
+            }, 1, 15, TimeUnit.SECONDS);
+
+
+            List<String> resultIds = result.get();
+            checkBatchStatus.shutdownNow();
+            logger.info("--- batch is done. --- : " + chunkBatch.getId());
+            // パイプへの書き込み
+            for (String resultId: resultIds) {
+                try (InputStream is = connection.getQueryResultStream(job.getId(), chunkBatch.getId(), resultId);
+                     BufferedReader br = new BufferedReader(new InputStreamReader(is, StandardCharsets.UTF_8));) {
+                    String line;
+                    while ((line = br.readLine()) != null) {
+                        pipedWriter.write(line);
+                        pipedWriter.newLine();
+                    }
+                } catch (Exception e) {
+                    logger.error("Failed to save result at " + resultId, e);
+                    throw  new RuntimeException("Failed to save result");
+                }
+            }
+        } catch (Exception e) {
+            logger.error("Failed to save result");
+            throw  new RuntimeException(e);
+        }
+
+    }
 
 }
